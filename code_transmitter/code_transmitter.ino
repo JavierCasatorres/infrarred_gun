@@ -10,7 +10,7 @@ ISR(TIM0_COMPA_vect)
 {
   count++;
   if (count == 15){ // At ~37.6 KHz, 11 cycles give about 300 us pulses, which is compatible with 600 and 900 us pulses
-    PORTB = (PORTB & (3u << 0))| enable_out & arr_elem[countaux] | enable_out << 1;
+    PORTB = (PORTB & ~(3u))| (enable_out & arr_elem[countaux]) | enable_out << 3;
     countaux = (countaux + 1) & 0x0000003F; //This makes it module 32 easily
     count = 0;
   }
@@ -25,7 +25,7 @@ void setup() {
 
 
   // Configure both carrier output counter (counter B) and modulating signal output counter (counter A)
-  DDRB = 7;                       // PB0 AND PB1 as an output
+  DDRB = 0xB;                       // PB0, PB1 AND PB3 as an output
   TCCR0A = 0 << COM0A1 | 0 << COM0A0 | 1 << COM0B0 | 0 << WGM00;  // Toggle OC0B (channel B) in CTC mode, channel A works normally (as GPIO)
   TCCR0B = 1<<WGM02 | 2<<CS00;    // CTC mode; use OCR0A or OCR0B; Use /8 prescaler
   OCR0B = 12;                  // 12 gives a frequency of roughly 37.6 kHz for the carrier (channel B).
@@ -43,7 +43,7 @@ void setup() {
 
 void loop() {
   // When the button (third port) is pushed, increase counter at a certain rate
-  if(PORTB & (1u << 3)){
+  if(PINB & (1u << 2)){
     enable_out = 1;
     if(count_button != COUNT_LIMIT) // If maximum value is reached, saturate
       count_button += 2;
@@ -59,7 +59,7 @@ void loop() {
   // for cooldown time
   if(count_button == COUNT_LIMIT){
     enable_out = 0;
-    PORTB = 1u << 2;
+    PORTB = 1u << 3;
     // Locked here until count limit is reached
     for(int i = 0; i < COUNT_LIMIT; i++);
     PORTB = 0;
