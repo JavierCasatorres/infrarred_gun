@@ -3,12 +3,13 @@ int count = 0, countaux = 0, enable_out = 0;
 unsigned long count_button = 0;
 int recharging = 0;
 unsigned char arr_elem[64] = {
-  0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
 ISR(TIM0_COMPA_vect)
 {
+  // NOTE THAT THE SHOOTING VAL IS NEGATED as is connected to a PMOS
   count++;
   if (count == 15){ // At ~37.6 KHz, 11 cycles give about 300 us pulses, which is compatible with 600 and 900 us pulses
     count = 0;
@@ -21,7 +22,7 @@ ISR(TIM0_COMPA_vect)
       }
     }
     else{ //Either forcefully recharging or "normal" recharging
-      PORTB = (PORTB & 0xFE);
+      PORTB = (PORTB | 0x01); // Dont shoot
       if(count_button > 0)
         count_button--;
     }
