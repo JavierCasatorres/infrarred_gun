@@ -50,23 +50,23 @@ void setup() {
   //Configure interrupts
   //Enable interrupts globally
   asm("sei");
-  //Enable interrupt on compare match in channel A  
+  //Enable interrupt on compare match in channel A  as
   TIMSK0 = 1 << OCIE0A;
 }
 
 void loop() {
   if (recharging == 0){
-    PORTB = PORTB & 0xFB; //Set the overload LED off: and with 1111 1011
+    PORTB = PORTB | 0x04; //Set the overload LED off (active low): logic OR with 0000 0100
     // When the button (PB3 port) is pushed, increase counter at a certain rate
     if(PINB & 0x08){
       enable_out = 1;
     }
-    else{
+    else{ 
       enable_out = 0;
     }
     if(count_button >= COUNT_LIMIT){
       recharging = 1;
-      PORTB = PORTB | 0x04; //Set the overload LED ON: or with 0000 0100
+      PORTB = PORTB & 0xFB; //Set the overload LED ON (active low): logic AND with 1111 1011
     }     
   }
   else{
