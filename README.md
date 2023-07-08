@@ -8,7 +8,7 @@ An specific PCB is designed to use 2 P channel MOSFETs to effectively __and__ (t
 PB3 is used as input for a _trigger_ signal (nothing is output if the trigger is not pressed). PB2 is used to output an "overload" signal, which is set when the trigger is pulsed continuously for ~1 second, simulating an overheating of the gun. If overload is reached, a ~3s cooldown period is required
 
 ### IMPORTANT ###
-ATTINY10 has only usable I/O by default. It has, however, another pin which is usually used as a /RESET for the TPI programming interface.
+ATTINY10 has only 3 usable I/O by default (PB0, PB1, PB2). It has, however, another pin which is usually used as a /RESET for the TPI programming interface (PB3).
 The reset can be disabled by disabling the RSTDISBL fuse with AVRDUDE and USBASP (if it has been updated to support TPI):
 -Ufuse:w:0xfe:m (see https://www.engbedded.com/fusecalc/ for reference).
 However, once disabled the chip can no longer be programmed with the usual programer (USBASP). It is required that 12V are applied to the /RESET pin for the whole programming session. This has been achieved by creating a voltage converter which can be placed as an intermediate between the USBASP and the ATTINY10, converting the usual 0V of "enabling" reset into 12V (and the usual 5V into 0V) via the use of a NMOS:
